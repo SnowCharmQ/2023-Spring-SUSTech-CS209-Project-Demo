@@ -2,9 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Demo</title>
+    <title>Java2 Project Demo</title>
+    <!--  Import echarts lib by CDN, you can also import from local files  -->
+    <script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2/dist/echarts-wordcloud.min.js"></script>
+    <script src='../js/wordcloud-demo.js'></script>
+    <script src='../js/piechart-demo.js'></script>
 </head>
-<body>
-
+<body style="text-align: center">
+<h1>Rust Tag</h1>
+<h4>This is just a demo page</h4>
+<div style="width: 100%;height: 60vh;display: flex">
+    <div style="width: 50%;height: 100%">
+        <div id="wordcloud" style="height: 100%;width: 100%"></div>
+    </div>
+    <div style="width: 50%;height: 100%">
+        <div id="piechart" style="height: 100%;width: 100%"></div>
+    </div>
+</div>
 </body>
+
+<script>
+<!--  echarts configuration  -->
+    let wordcloud = echarts.init(document.getElementById('wordcloud'));
+    let wordcloudData = [];
+    for (const key in wordcloudRaw) {
+        wordcloudData.push({
+            name: key,
+            value: wordcloudRaw[key]
+        });
+    }
+    let wordcloudOption = {
+        title: {
+            text: 'Related Tag WordCloud',
+            textStyle: {
+                fontStyle: 'oblique',
+                fontSize: 20,
+                color: '#4cc9f0'
+            },
+            left: 'center'
+        },
+        tooltip: {},
+        series: [{
+            type: 'wordCloud',
+            shape: {
+              cloudGrow: 0.2
+            },
+            sizeRange: [10, 60],
+            rotationRange: [-30, 30],
+            gridSize: 2,
+            drawOutOfBound: false,
+            layoutAnimation: true,
+            keepAspect: true,
+            textStyle: {
+                fontWeight: 'bold',
+                color: function () {
+                    return 'rgb(' + [
+                        Math.round(Math.random() * 160),
+                        Math.round(Math.random() * 160),
+                        Math.round(Math.random() * 160)
+                    ].join(',') + ')';
+                }
+            },
+            emphasis: {
+                textStyle: {
+                    shadowBlur: 15,
+                    shadowColor: '#333'
+                }
+            },
+            data: wordcloudData.sort(function (a, b) {
+                return b.value - a.value;
+            })
+        }]
+    };
+    wordcloud.setOption(wordcloudOption);
+
+    let piechart = echarts.init(document.getElementById('piechart'));
+    let piechartData = [];
+    for (const key in piechartRaw) {
+        piechartData.push({
+            name: key,
+            value: piechartRaw[key]
+        });
+    }
+    let pieOption = {
+        title: {
+            text: 'Problem Count With Corresponding Answer Count',
+            textStyle: {
+                fontStyle: 'oblique',
+                fontSize: 20,
+                color: '#4cc9f0'
+            },
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        grid: {
+            width: '100%',
+            height: '100%'
+        },
+        legend: {
+            orient: 'vertical',
+            textStyle: {
+                fontSize: 20,
+                color: 'black'
+            },
+            right: 'center',
+            bottom: 'bottom',
+        },
+        series: [
+            {
+                name: 'Problem Count',
+                type: 'pie',
+                radius: '80%',
+                data: piechartData,
+                color: ['#9400D3', '#FF00FF', '#4169E1', '#3CB371',
+                    '#FFA500', '#FF7F50', '#DC143C', '#000080'],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0.1, 0.2, 0, 0.5)',
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        label: {
+                            textStyle: {
+                                fontSize: 12,
+                                color: 'black'
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    piechart.setOption(pieOption);
+</script>
+
 </html>
